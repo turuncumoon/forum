@@ -1,54 +1,219 @@
 <!doctype html>
+
 <html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>forum.sh — Topluluk terminali</title>
 <style>
 :root{color-scheme:dark;--bg:#1a1209;--panel:#21180e;--ink:#ffb000;--line:#594122;--dim:#c29d66;--paper:#ffe0a4}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--paper);font:16px/1.55 "IBM Plex Mono",Consolas,"Liberation Mono",monospace}main,header>div,footer{width:min(1150px,92%);margin:auto}header{border-bottom:1px solid var(--line)}header>div,footer,.bar,.end,.meta{display:flex;align-items:center;justify-content:space-between;gap:12px}header>div{height:60px}button,input,textarea,select{font:inherit;color:inherit}button,a,select{cursor:pointer}button{background:transparent;border:0}a{color:inherit}.brand{font-weight:700;font-size:21px;text-decoration:none;color:var(--ink)}small,.meta,.path,footer,.label{font-size:13px;color:var(--dim)}.hero{position:relative;overflow:hidden;isolation:isolate;border:1px solid var(--line);background:repeating-linear-gradient(0deg,#ffb00005 0 1px,transparent 1px 4px),linear-gradient(100deg,#21180e,#30200d);margin:30px 0 24px;padding:24px 30px}.hero h1{font-size:clamp(46px,7vw,82px);letter-spacing:-.085em;line-height:1.06;margin:7px 0;color:var(--ink)}.cursor{display:inline-block;width:.35em;height:.7em;background:currentColor;margin-left:.13em;animation:blink 1.5s steps(1) infinite}@keyframes blink{60%{opacity:.2}}@media(prefers-reduced-motion:reduce){.cursor{animation:none}}.hero p{margin:10px 0 0}.hero canvas{position:absolute;right:5%;top:10%;width:28%;height:80%;object-fit:contain;image-rendering:pixelated;z-index:-1}.layout{display:grid;grid-template-columns:235px minmax(0,1fr);gap:24px}.box,.board{border:1px solid var(--line);background:var(--panel)}.box{padding:16px;margin-bottom:16px}.label{letter-spacing:.09em;text-transform:uppercase;display:block;margin-bottom:11px}.category{display:flex;align-items:center;text-align:left;gap:9px;width:100%;padding:8px 10px;color:var(--dim)}.category span{margin-left:auto;font-size:13px}.category.active,.primary{background:var(--ink);color:var(--bg);font-weight:700}.category:hover:not(.active),article:hover{background:#302414}.stats p{display:flex;justify-content:space-between;margin:8px 0;color:var(--dim);font-size:14px}.stats b{color:var(--paper)}.board{padding:22px}.bar{margin-bottom:17px}.bar h2{font-size:22px;margin:0;letter-spacing:-1px}.primary,.ghost{padding:9px 15px;border:1px solid var(--ink)}.ghost{color:var(--ink)}.filters{display:flex;gap:10px;margin-bottom:12px}input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--line);padding:9px 12px;border-radius:0}select{width:auto}.filters input{min-width:0}.topic{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:14px;padding:17px 0;border-top:1px dashed var(--line)}.vote{border:1px solid var(--line);font-size:14px;color:var(--ink);min-height:44px}.vote[aria-pressed=true]{background:var(--ink);color:var(--bg)}.title{font-size:16px;font-weight:bold;overflow-wrap:anywhere;text-decoration:none}.title:hover{text-decoration:underline;color:var(--ink)}.meta{justify-content:flex-start;flex-wrap:wrap;margin-top:5px;gap:6px 12px}.tag{color:var(--ink)}.replies{text-align:right;font-size:13px;color:var(--dim)}footer{margin:22px auto;padding:13px 0;border-top:1px solid var(--line)}dialog{background:var(--panel);color:var(--paper);border:1px solid var(--ink);width:min(620px,94vw);max-height:88vh;padding:24px}dialog::backdrop{background:#0c0804cc}dialog h2{color:var(--ink);margin:0 0 14px;font-size:21px;overflow-wrap:anywhere}form,label{display:grid;gap:5px}form{gap:13px}label{font-size:14px}textarea{resize:vertical;min-height:86px}label select{width:100%}.end{justify-content:flex-end}.message{white-space:pre-wrap;overflow-wrap:anywhere}.reply{border-top:1px dashed var(--line);padding:12px 0}.reply p{margin:3px 0}.empty{padding:24px 0}.path{color:var(--dim)}:focus-visible{outline:2px dashed var(--ink);outline-offset:3px}@media(max-width:740px){.layout{grid-template-columns:1fr;gap:12px}.stats{display:none}.box{margin:0}.categories{display:flex;flex-wrap:wrap}.category{width:auto;font-size:14px}.category span{display:none}.hero{margin:15px 0;padding:20px}.board{padding:15px}.hero canvas{opacity:.48;right:1%}.topic{gap:10px;grid-template-columns:39px 1fr}.replies{grid-column:2;text-align:left;margin-top:-6px}.bar h2{font-size:18px}.primary{padding:8px 10px}.filters select{max-width:45%}}@media(max-width:440px){.hero canvas{width:22%;top:0}.hero p{font-size:14px}.filters,.bar{flex-wrap:wrap}.filters input{flex:1}.path{font-size:12px}}
-</style>
-<header><div><a class="brand" href="#">[&gt;_] forum.sh</a><span class="path">~/topluluk/forum</span></div></header>
-<main><section class="hero"><small>$ forum --başlat</small><h1>forum.sh<span class="cursor"></span></h1><p>Yazılım, projeler ve terminal sohbetleri.</p><canvas width="134" height="72" id="art" aria-hidden="true"></canvas></section>
-<div class="layout"><aside><section class="box"><strong class="label">~/ kategoriler</strong><nav class="categories" aria-label="Kategoriler"></nav></section><section class="box stats"><strong class="label">Forum istatistikleri</strong><p>Toplam konu <b id="total"></b></p><p>Toplam yanıt <b id="responses"></b></p></section></aside>
-<section class="board"><div class="bar"><h2 id="heading">Tüm konular</h2><button class="primary" id="create">+ Yeni konu</button></div><div class="filters"><input type="search" id="query" placeholder="⌕ Konularda ara..." aria-label="Konularda ara"><select aria-label="Konuları sırala" id="sort"><option value="new">En yeni</option><option value="votes">En çok oy</option><option value="replies">En çok yanıt</option></select></div><div id="list"></div><small id="count" role="status"></small></section></div></main><footer><span>forum.sh</span><span>Yerel oturum</span></footer>
-<dialog id="compose" aria-labelledby="composeTitle"><h2 id="composeTitle">$ Yeni konu</h2><form id="postForm"><label>Başlık<input required maxlength="120" name="title"></label><label>Kategori<select name="category"></select></label><label>Kullanıcı adı<input maxlength="30" name="author" placeholder="misafir"></label><label>Mesaj<textarea required name="body" maxlength="5000"></textarea></label><div class="end"><button type="button" class="ghost" data-close>Vazgeç</button><button class="primary">Konuyu aç</button></div></form></dialog>
-<dialog id="thread" aria-labelledby="threadTitle"><div class="bar"><small id="threadCat"></small><button class="ghost" data-close>Kapat</button></div><h2 id="threadTitle"></h2><small id="by"></small><p class="message" id="bodyText"></p><h3 id="replyHeading"></h3><div id="comments"></div><form id="replyForm"><label>Kullanıcı adı<input name="author" maxlength="30" placeholder="misafir"></label><label>Yanıtın<textarea name="body" required maxlength="5000"></textarea></label><div class="end"><button class="primary">Yanıt gönder</button></div></form></dialog>
-<script>
+summary{cursor:pointer;color:var(--dim);font-size:14px}summary:hover{color:var(--ink)}.options{padding:10px 0;margin-bottom:10px;border-bottom:1px solid var(--line)}.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}.chip{color:var(--dim);border:1px solid var(--line);padding:5px 9px;font-size:14px}.chip:hover,.chip[aria-pressed=true]{color:var(--ink);border-color:var(--ink)}.danger{color:#ffa385}.empty{text-align:center;padding:40px 12px}.empty strong{display:block;font-size:22px;color:var(--paper)}.empty p{color:var(--dim)}#filters,#tools{display:grid;gap:10px;margin-top:12px}#filters{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))}label select{min-width:0}.compact .topic{padding:5px 0}.large .message,.large .title{font-size:20px}.still .cursor{animation:none}blockquote{border-left:2px solid var(--ink);padding-left:10px;margin:6px 0;color:var(--dim)}code{background:var(--bg);padding:2px 4px}.reply .controls{margin:4px 0}.editor-preview{padding:12px;border:1px dashed var(--line)}.flag{color:var(--ink);font-size:13px}.hint{color:var(--dim);font-size:14px}button:disabled{opacity:.5;cursor:default}dialog button{overflow-wrap:anywhere}#notice{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;z-index:5}#notice:empty{display:none}.membernav{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.userlink{color:var(--dim);padding:0;text-decoration:underline;text-underline-offset:3px}.inboxrow{display:grid;gap:4px;padding:12px 0;border-bottom:1px dashed var(--line)}#profileContent [hidden],.membernav [hidden]{display:none}.checkrow{display:flex;align-items:center;gap:8px}.checkrow input{width:auto}.profileTopics p{margin:8px 0}#profileBio{white-space:pre-wrap;overflow-wrap:anywhere}@media(max-width:600px){header>div{height:auto;min-height:60px;padding-block:8px}.membernav button{font-size:12px;padding:5px}.brand{white-space:nowrap}}
+.window-command{display:none}
+@media (prefers-reduced-motion:no-preference){
+ body:not(.still) dialog[open]{
+  animation:window-open 220ms cubic-bezier(.2,.75,.25,1);
+ }
+ body:not(.still) dialog[open]::backdrop{
+  animation:backdrop-open 180ms ease-out;
+ }
+ @keyframes window-open{
+  from{opacity:0;transform:translateY(7px) scale(.985)}
+  to{opacity:1;transform:none}
+ }
+ @keyframes backdrop-open{
+  from{opacity:0}
+  to{opacity:1}
+ }
+ body:not(.still) dialog[open]>.window-command{
+  display:block;position:absolute;top:3px;left:24px;
+  font:12px/1.25 ui-monospace,monospace;color:var(--ink);
+  pointer-events:none;user-select:none;opacity:0;
+  animation:window-command 360ms linear;
+ }
+ @keyframes window-command{
+  0%{opacity:0;clip-path:inset(0 100% 0 0)}
+  18%{opacity:.50;clip-path:inset(0 78% 0 0);animation-timing-function:steps(6,end)}
+  55%{opacity:.50;clip-path:inset(0 0 0 0)}
+  100%{opacity:0;clip-path:inset(0 0 0 0)}
+ }
+}
+#pollPanel{border:1px solid var(--line);padding:14px;margin:16px 0}#pollPanel h3{margin:0 0 12px;overflow-wrap:anywhere}.poll-option{margin:10px 0}.poll-option label{display:flex;align-items:center;gap:8px;overflow-wrap:anywhere}.poll-option input{width:auto}.poll-option meter{width:100%;height:8px;accent-color:var(--ink)}#pollEditor[open] label{margin-block:8px}</style>
+<header><div><a class="brand" href="#">[&gt;_] forum.sh</a><nav class="membernav"><button class="chip" id="inboxButton" hidden>Bildirimler</button><button class="chip" id="myProfile" hidden>Profilim</button><button class="chip" id="account" type="button">Giriş / Kayıt</button></nav></div></header>
+<main><section class="hero"><small>$ forum --başlat</small><h1>forum.sh<span class="cursor"></span></h1><p>Topluluk forumu</p><canvas width="134" height="72" id="art" aria-hidden="true"></canvas></section>
+<div class="layout"><aside><section class="box"><strong class="label">~/ kategoriler</strong><nav class="categories" aria-label="Kategoriler"></nav></section><details class="box"><summary>Araçlar ve ayarlar</summary><div id="tools"></div></details><section class="box stats"><strong class="label">Forum istatistikleri</strong><p>Toplam konu <b id="total"></b></p><p>Toplam yanıt <b id="responses"></b></p></section></aside>
+<section class="board"><div class="bar"><h2 id="heading">Tüm konular</h2><button class="primary" id="create" hidden>+ Yeni konu</button></div><div class="filters"><input type="search" id="query" placeholder="⌕ Konularda ara..." aria-label="Konularda ara"><select aria-label="Konuları sırala" id="sort"><option value="new">En yeni</option><option value="old">En eski</option><option value="az">Başlık A–Z</option><option value="activity">Son etkinlik</option><option value="votes">En çok oy</option><option value="replies">En çok yanıt</option></select></div><details class="options"><summary>Filtreler</summary><div id="filters"></div></details><div id="list"></div><small id="count" role="status"></small></section></div></main><footer><span>forum.sh</span><span id="identity">Misafir · salt okunur</span></footer>
+<dialog id="compose" aria-labelledby="composeTitle"><span aria-hidden="true" class="window-command">$ open editor</span><h2 id="composeTitle">$ Yeni konu</h2><form id="postForm"><label>Başlık<input required maxlength="120" name="title"></label><label>Kategori<select name="category"></select></label><label>Kullanıcı adı<input maxlength="30" name="author" placeholder="misafir"></label><label>Etiketler<input name="tags" maxlength="150" placeholder="Virgülle ayır"></label><label>Mesaj<textarea required name="body" maxlength="5000"></textarea></label><div id="editorExtras"></div><details id="pollEditor" class="options"><summary>Anket ekle</summary><label>Soru<input name="pollQuestion" maxlength="140"></label><label>Seçenekler<textarea name="pollOptions" placeholder="Her satıra bir seçenek" maxlength="490"></textarea></label><small>2–6 farklı seçenek, her biri en fazla 80 karakter.</small></details><div class="end"><button type="button" class="ghost" data-close>Vazgeç</button><button class="primary">Konuyu aç</button></div></form></dialog>
+<dialog id="thread" aria-labelledby="threadTitle"><span aria-hidden="true" class="window-command">$ open thread</span><div class="bar"><small id="threadCat"></small><button class="ghost" data-close>Kapat</button></div><h2 id="threadTitle"></h2><small id="by"></small><p class="message" id="bodyText"></p><section id="pollPanel" hidden aria-label="Konu anketi"></section><details class="options"><summary>Konu işlemleri</summary><div id="actions"></div></details><div id="danger"></div><h3 id="replyHeading"></h3><div class="filters"><input id="rq" aria-label="Yanıtlarda ara" placeholder="Yanıtlarda ara"><select id="rs" aria-label="Yanıt sırası"><option value="old">İlk yanıt</option><option value="new">Son yanıt</option><option value="likes">Beğeniler</option></select></div><div id="comments"></div><form id="replyForm"><label>Kullanıcı adı<input name="author" maxlength="30" placeholder="misafir"></label><label>Yanıtın<textarea name="body" required maxlength="5000"></textarea></label><div class="end"><button class="primary">Yanıt gönder</button></div></form></dialog>
+<dialog id="inboxDialog" aria-labelledby="inboxTitle"><span aria-hidden="true" class="window-command">$ open inbox</span><div class="bar"><h2 id="inboxTitle">Takip ve bildirimler</h2><button class="ghost" data-close>Kapat</button></div><label class="checkrow"><input id="newOnly" type="checkbox">Yalnızca yeni yanıtlar</label><section id="inboxList"></section></dialog>
+<dialog id="profileDialog" aria-labelledby="profileName"><span aria-hidden="true" class="window-command">$ open profile</span><div class="bar"><h2 id="profileName">Üye profili</h2><button class="ghost" data-close>Kapat</button></div><p id="profileStatus" role="status"></p><div id="profileContent" hidden><p id="profileBio"></p><p id="profileStats" class="meta"></p><details id="bioEditor" class="options"><summary>Tanıtım yazısını düzenle</summary><form id="bioForm"><label>Herkese açık tanıtım yazısı<textarea id="bioInput" maxlength="240"></textarea></label><button class="primary">Profili kaydet</button></form></details><h3>Son konular</h3><section id="profileTopics" class="profileTopics"></section></div></dialog><dialog id="loginDialog" aria-labelledby="loginHeading"><span aria-hidden="true" class="window-command">$ open auth</span><div class="bar"><h2 id="loginHeading">$ Üye girişi</h2></div><div class="controls"><button id="modeLogin" class="chip">Giriş yap</button><button id="modeRegister" class="chip">Kayıt ol</button></div><form id="authForm"><label>Kullanıcı adı<input name="name" required minlength="3" maxlength="30" autocomplete="username"></label><label>Parola<input type="password" name="password" required maxlength="128" autocomplete="current-password"></label><small id="passHint"></small><button class="primary">Giriş yap</button></form><p role="status" id="authStatus"></p><div class="controls" id="social"></div><p class="hint" id="socialHint"></p><button class="ghost" id="guest">Misafir olarak devam et</button><p class="hint">Misafirler konuları ve yanıtları okuyabilir. Yazmak için üye girişi gerekir.</p></dialog><div id="notice" role="status"></div><input type="file" id="importFile" accept=".json" hidden><script>
 'use strict';
-const $=s=>document.querySelector(s), cats=['Genel','Yardım','Proje','Sohbet'], key='forum-sh-topluluk-v1';
-const examples=[
-['Haftalık proje paylaşımı','Proje','mert','Bu hafta küçük bir RSS okuyucu yazdım. Sizin üzerinde çalıştığınız projeler neler?',18,'elif','Ben de çizim defterimi web sayfasına dönüştürüyorum.'],
-['GitHub Pages’te özel alan adı nasıl bağlanır?','Yardım','elif','İlk kişisel sitemi hazırladım. Özel alan adı ayarlarını hangi sırayla yaptınız?',24],
-['Forum kurallarını birlikte yazalım','Genel','deniz','İlk önerim, yardım isterken denediğimiz adımları konuya eklemek. Sizce başka neler olmalı?',12,'can','Sorunu çözdüğümüzde çözümü de paylaşalım.'],
-['Hangi editörü kullanıyorsunuz, neden?','Sohbet','zeynep','Ben klavye kısayollarını kendime göre ayarlayabildiğim editörleri seviyorum. Sizin vazgeçilmez özelliğiniz hangisi?',9],
-['Statik bir sitede aramayı nasıl tasarlarsınız?','Yardım','can','Küçük bir arşiv hazırlıyorum. Başlık aramasına etiketleri de eklemeyi düşünüyorum.',7],
-['İlk açık kaynak katkım kabul edildi','Sohbet','derya','Bir projenin kurulum belgesindeki eksik adımı düzelttim. Küçük bir katkıyla başlamak cesaret verdi.',31,'mert','Tebrikler! Kurulum belgeleri benim de ilk baktığım yer.']];
-const seed=examples.map(([title,category,author,body,votes,a,b],i)=>({id:'t'+i,title,category,author,body,votes,time:Date.now()-(i+1)*3600000,replies:a?[{author:a,body:b}]:[],voted:false}));
-let topics=seed,category='Tümü',current;
-try{const stored=JSON.parse(localStorage.getItem(key));if(Array.isArray(stored)&&stored.every(t=>t&&Array.isArray(t.replies)&&cats.includes(t.category)))topics=stored}catch{}
-const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function save(){try{localStorage.setItem(key,JSON.stringify(topics))}catch{alert('Tarayıcı kayıt alanına yazılamadı. Değişiklik bu oturumda görünür.')}render()}
-const date=t=>new Intl.DateTimeFormat('tr',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(t);
+const $=s=>document.querySelector(s), cats=['Genel','Yardım','Proje','Sohbet'];
+const KEY='forum-sh-v2',OLD='forum-sh-topluluk-v1',uid=()=>crypto.randomUUID();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fold=s=>String(s).toLocaleLowerCase('tr').trim();
+const date=t=>new Intl.DateTimeFormat('tr',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(t);
+function read(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
+function put(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch{alert('Kayıt alanına yazılamadı. Yedek alarak bu oturumu saklayabilirsin.');return false}}
+function safeId(x){return typeof x==='string'&&/^[a-zA-Z0-9_-]{1,80}$/.test(x)}
+function normalize(t){
+ if(!t||typeof t.title!=='string'||typeof t.body!=='string'||!cats.includes(t.category)||!Array.isArray(t.replies))throw Error('Konu biçimi geçersiz');
+ const timestamp=x=>Number.isFinite(x)&&x>0&&x<8e15?x:Date.now();
+ return {poll:t.poll?{question:t.poll.question,options:t.poll.options}:null,id:safeId(t.id)?t.id:uid(),title:t.title.slice(0,120),body:t.body.slice(0,5000),author:String(t.author||'misafir').slice(0,30),category:t.category,time:timestamp(t.time),activity:timestamp(t.activity||t.time),votes:Math.max(0,Number(t.votes)||0),voted:!!t.voted,tags:Array.isArray(t.tags)?t.tags.map(String).slice(0,12):[],...Object.fromEntries(['pin','locked','archived','trash','star','seen'].map(k=>[k,!!t[k]])),replies:t.replies.map(r=>{if(!r||typeof r.body!=='string')throw Error('Yanıt biçimi geçersiz');return {id:safeId(r.id)?r.id:uid(),author:String(r.author||'misafir').slice(0,30),body:r.body.slice(0,5000),time:timestamp(r.time||t.time),like:!!r.like,solution:!!r.solution}})}
+}
+let topics=[],member=null,enabled=[],mode='login';
+const personal=()=> 'forum-personal-'+(member?.id||'guest');
+function savePersonal(){put(personal(),Object.fromEntries(topics.map(t=>[t.id,{star:!!t.star,seen:!!t.seen}])))}
+async function api(path,data){const res=await fetch(path,data?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}:{cache:'no-store'});const x=await res.json();if(!res.ok)throw Error(x.error||'İşlem tamamlanamadı');return x}
+async function refresh(){const data=await api('/api/forum');member=data.user;enabled=data.providers;const marks=read(personal(),{});topics=data.topics.map(t=>({...t,...marks[t.id]}));$('#create').hidden=!member;$('#account').textContent=member?member.name+' · Çıkış':'Giriş / Kayıt';$('#identity').textContent=member?'@'+member.name:'Misafir · salt okunur';$('[data-act="import"]').hidden=!member;render();if(current){current=topics.find(t=>t.id===current.id);if(current)displayThread();else exitThread()}drawSocial();syncCommunity()}
+function drawSocial(){$('#social').innerHTML=['google','github','discord'].map((p,i)=>enabled.includes(p)?'<a class="chip" target="_top" href="/auth/'+p+'/start">'+['Google','GitHub','Discord'][i]+' ile devam et</a>':'<button class="chip" disabled>'+['Google','GitHub','Discord'][i]+'</button>').join('');$('#socialHint').textContent=enabled.length<3?'Soluk görünen sağlayıcılar henüz etkinleştirilmedi.':''}
+function loginMode(k){mode=k;const reg=k==='register';$('#authForm .primary').textContent=reg?'Hesap oluştur':'Giriş yap';$('#loginHeading').textContent=reg?'$ Kayıt ol':'$ Üye girişi';$('#passHint').textContent=reg?'Kullanıcı adı 3–30, parola en az 12 karakter olmalı.':'';$('#authForm').elements.password.minLength=reg?12:1;$('#authForm').elements.password.autocomplete=reg?'new-password':'current-password';$('#authStatus').textContent=''}
+function showLogin(){loginMode('login');drawSocial();if(!$('#loginDialog').open)$('#loginDialog').showModal()}
+$('#modeLogin').onclick=()=>loginMode('login');$('#modeRegister').onclick=()=>loginMode('register');
+$('#guest').onclick=()=>{$('#loginDialog').close();sessionStorage.setItem('forum-guest','1')};
+$('#account').onclick=async()=>{if(!member)return showLogin();try{await api('/api/logout',{});location.reload()}catch(e){alert(e.message)}};
+$('#authForm').onsubmit=async e=>{e.preventDefault();const f=e.target;f.querySelector('.primary').disabled=true;try{await api('/api/'+mode,Object.fromEntries(new FormData(f)));f.reset();await refresh();$('#loginDialog').close();notify('Oturum açıldı')}catch(e){$('#authStatus').textContent=e.message}finally{f.querySelector('.primary').disabled=false}};
+async function change(action,data={}){try{const result=await api('/api/write',{...data,action});await refresh();return result}catch(e){alert(e.message);return null}}
+let prefs=read('forum-sh-prefs',{}), category='Tümü', current=null, editing=null, editReply=null, timer;
+const active=()=>topics.filter(t=>!t.trash&&!t.archived);
+const pref=()=>put('forum-sh-prefs',prefs);
+function notify(s){$('#notice').textContent=s;clearTimeout(timer);timer=setTimeout(()=>$('#notice').textContent='',2800)}
+function save(){savePersonal();render()}
+function btn(id,title,style=''){return '<button type="button" class="chip '+style+'" data-act="'+id+'">'+esc(title)+'</button>'}
+function choices(el,items){el.innerHTML=items.map(([v,n])=>'<option value="'+esc(v)+'">'+esc(n)+'</option>').join('')}
+function field(id,label,items){return '<label>'+label+'<select id="'+id+'">'+items.map(([v,n])=>'<option value="'+v+'">'+n+'</option>').join('')+'</select></label>'}
+$('#filters').innerHTML=field('view','Görünüm',[['all','Tüm konular'],['star','Kaydedilenler'],['unread','Okunmamış'],['empty','Yanıtsız'],['solved','Çözülmüş'],['poll','Anketli konular'],['archive','Arşiv'],['trash','Çöp kutusu']])+field('period','Tarih',[['0','Tüm zamanlar'],['1','Son 24 saat'],['7','Son 7 gün'],['30','Son 30 gün']])+'<label>Yazar<input id="authorFilter"></label><label>Etiket<input id="tagFilter"></label>'+btn('reset','Filtreleri sıfırla');
+$('#tools').innerHTML=btn('readAll','Tümünü okundu işaretle')+btn('backup','JSON yedeği indir')+btn('import','Yedek birleştir')+btn('compact','Kompakt liste')+btn('large','Büyük yazı')+btn('still','İmleç animasyonunu durdur')+(read(KEY,[]).length?btn('legacy','Eski yerel konuları indir'):'');
+function appearance(){for(const k of ['compact','large','still']){document.body.classList.toggle(k,!!prefs[k]);$('[data-act="'+k+'"]').setAttribute('aria-pressed',!!prefs[k])}}
+appearance();
+const fmt=s=>esc(s).split('\n').map(line=>{let x=line.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/_(.+?)_/g,'<em>$1</em>').replace(/`([^`]+)`/g,'<code>$1</code>');if(x.startsWith('&gt; '))return '<blockquote>'+x.slice(5)+'</blockquote>';return x.startsWith('- ')?'• '+x.slice(2):x}).join('\n');
+function reset(){category='Tümü';for(const s of ['#authorFilter','#tagFilter','#query'])$(s).value='';$('#view').value='all';$('#period').value='0';$('#sort').value='new'}
 function render(){
- $('.categories').innerHTML=['Tümü',...cats].map(c=>'<button class="category '+(c===category?'active':'')+'" aria-pressed="'+(c===category)+'" data-cat="'+c+'">['+(c===category?'x':' ')+'] '+c+'<span>'+topics.filter(t=>c==='Tümü'||t.category===c).length+'</span></button>').join('');
- $('#heading').textContent=category==='Tümü'?'Tüm konular':category;
- const q=$('#query').value.trim().toLocaleLowerCase('tr'),sort=$('#sort').value;
- const rows=topics.filter(t=>(category==='Tümü'||category===t.category)&&[t.title,t.author,t.body].join(' ').toLocaleLowerCase('tr').includes(q)).sort((a,b)=>(sort==='votes'?b.votes-a.votes:sort==='replies'?b.replies.length-a.replies.length:0)||b.time-a.time);
- $('#list').innerHTML=rows.map(t=>'<article class="topic"><button class="vote" aria-label="Oy '+(t.voted?'kaldır':'ver')+'" aria-pressed="'+!!t.voted+'" data-vote="'+escapeHtml(t.id)+'">▴<br>'+t.votes+'</button><div><a class="title" href="#konu/'+encodeURIComponent(t.id)+'">'+escapeHtml(t.title)+'</a><div class="meta"><span class="tag">#'+escapeHtml(t.category)+'</span><span>@'+escapeHtml(t.author)+'</span><span>'+date(t.time)+'</span></div></div><span class="replies">'+t.replies.length+' yanıt</span></article>').join('')||'<p class="empty">Bu aramada konu bulunamadı.</p>';
- $('#count').textContent=rows.length+' konu listelendi';$('#total').textContent=topics.length;$('#responses').textContent=topics.reduce((n,t)=>n+t.replies.length,0)
+ const view=$('#view').value,base=topics.filter(t=>view==='trash'?t.trash:view==='archive'?t.archived&&!t.trash:!t.trash&&!t.archived);
+ $('.categories').innerHTML=['Tümü',...cats].map(c=>'<button class="category '+(c===category?'active':'')+'" data-cat="'+c+'" aria-pressed="'+(c===category)+'">['+(c===category?'x':' ')+'] '+c+'<span>'+base.filter(t=>c==='Tümü'||t.category===c).length+'</span></button>').join('');
+ const q=fold($('#query').value),a=fold($('#authorFilter').value),tag=fold($('#tagFilter').value),days=Number($('#period').value),sort=$('#sort').value;
+ const rows=base.filter(t=>(category==='Tümü'||t.category===category)&&fold([t.title,t.body,t.author,...t.tags].join(' ')).includes(q)&&fold(t.author).includes(a)&&(!tag||t.tags.some(x=>fold(x)===tag))&&(!days||Date.now()-t.time<=days*86400000)&&({poll:!!t.poll,star:t.star,unread:!t.seen,empty:!t.replies.length,solved:t.replies.some(r=>r.solution)}[view]??true));
+ rows.sort((a,b)=>Number(b.pin)-Number(a.pin)||({old:a.time-b.time,az:a.title.localeCompare(b.title,'tr'),activity:b.activity-a.activity,votes:b.votes-a.votes,replies:b.replies.length-a.replies.length}[sort]||b.time-a.time));
+ $('#heading').textContent=category!=='Tümü'?category:$('#view').selectedOptions[0].textContent;
+ $('#total').textContent=active().length;$('#responses').textContent=active().reduce((n,t)=>n+t.replies.length,0);
+ $('#count').textContent=rows.length?rows.length+' konu listelendi':'';
+ $('#list').innerHTML=rows.map(t=>'<article class="topic"><button class="vote" data-vote="'+t.id+'" aria-label="Konu oyu" aria-pressed="'+t.voted+'" '+(t.trash||!member?'disabled':'')+'>▴<br>'+t.votes+'</button><div><a class="title" href="#konu/'+t.id+'">'+esc(t.title)+'</a><div class="meta"><span class="tag">#'+t.category+'</span><span>@'+esc(t.author)+'</span><span>'+date(t.time)+'</span>'+t.tags.map(x=>'<span>#'+esc(x)+'</span>').join('')+'</div><span class="flag">'+[t.pin&&'Sabit',t.star&&'Kaydedildi',t.locked&&'Kilitli',t.replies.some(r=>r.solution)&&'Çözüldü'].filter(Boolean).join(' · ')+'</span></div><span class="replies">'+t.replies.length+' yanıt</span></article>').join('')||'<div class="empty"><strong>'+(view==='all'&&!topics.length?'Henüz konu yok':'Burada konu yok')+'</strong><p>'+(view==='all'&&!topics.length?(member?'İlk tartışmayı başlatmak için bir konu aç.':'İlk konuyu açmak için giriş yap.'):'Başka bir kategori veya filtre seçebilirsin.')+'</p></div>';
 }
 $('.categories').onclick=e=>{const b=e.target.closest('[data-cat]');if(b){category=b.dataset.cat;render()}};
-$('#query').oninput=render;$('#sort').onchange=render;
-$('#list').onclick=e=>{const b=e.target.closest('[data-vote]');if(b){const t=topics.find(t=>t.id===b.dataset.vote);t.votes+=t.voted?-1:1;t.voted=!t.voted;save();$('#list').querySelector('[data-vote="'+t.id+'"]').focus()}};
-$('#postForm select').innerHTML=cats.map(c=>'<option>'+c+'</option>').join('');
-$('#create').onclick=()=>{$('#postForm select').value=category==='Tümü'?'Genel':category;$('#compose').showModal()};
-document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
-function valid(form){for(const el of form.querySelectorAll('[required]')){if(!el.value.trim()){el.setCustomValidity('Lütfen bu alanı doldurun.');el.reportValidity();return false}}return true}
+for(const s of ['#query','#filters','#sort'])$(s).oninput=render;
+$('#list').onclick=e=>{const b=e.target.closest('[data-vote]');if(member&&b)change('vote',{id:b.dataset.vote})};
+const form=$('#postForm'),rf=$('#replyForm'),postFields=form.elements;
+choices(postFields.category,cats.map(x=>[x,x]));
+$('#editorExtras').innerHTML='<div class="controls">'+[['bold','Kalın'],['italic','İtalik'],['code','Kod'],['quote','Alıntı'],['list','Liste'],['preview','Önizleme']].map(([k,v])=>btn(k,v)).join('')+'</div><small id="counter"></small><div id="preview" class="message editor-preview" hidden></div>';
+function count(){const s=postFields.body.value;$('#counter').textContent=s.length+' / 5000 karakter · '+(s.trim()?s.trim().split(/\s+/).length:0)+' kelime';$('#preview').innerHTML=fmt(s)}
+const draftKey=()=>personal()+'-draft-'+(editing?.id||'new');
+form.oninput=()=>{put(draftKey(),Object.fromEntries(new FormData(form)));count()};
+function writer(t=null,copy=false){if(!member)return showLogin();editing=copy?null:t;form.reset();const draft=copy?null:read(draftKey(),null);const d=draft||t||{};$('#pollEditor').hidden=!!editing;postFields.pollQuestion.value=d.pollQuestion||(!editing&&d.poll?.question)||'';postFields.pollOptions.value=d.pollOptions||(!editing&&d.poll?.options.join('\n'))||'';$('#pollEditor').open=!editing&&!!(postFields.pollQuestion.value||postFields.pollOptions.value);postFields.title.value=d.title||'';postFields.category.value=d.category||(cats.includes(category)?category:cats[0]);postFields.author.value=member.name;postFields.author.readOnly=true;postFields.body.value=d.body||'';postFields.tags.value=Array.isArray(d.tags)?d.tags.join(', '):d.tags||'';$('#composeTitle').textContent=editing?'$ Konuyu düzenle':'$ Yeni konu';form.querySelector('.primary').textContent=editing?'Kaydet':'Konuyu aç';$('#preview').hidden=true;count();$('#compose').showModal()}
+$('#create').onclick=()=>writer();
+function valid(f){for(const el of f.querySelectorAll('[required]'))if(!el.value.trim()){el.setCustomValidity('Bu alanı doldur.');el.reportValidity();return false}return true}
 document.addEventListener('input',e=>e.target.setCustomValidity?.(''));
-$('#postForm').onsubmit=e=>{e.preventDefault();const f=e.target;if(!valid(f))return;const data=new FormData(f),t={id:crypto.randomUUID(),title:data.get('title').trim(),category:data.get('category'),author:data.get('author').trim()||'misafir',body:data.get('body').trim(),time:Date.now(),votes:0,replies:[]};topics.unshift(t);category=t.category;$('#query').value='';$('#sort').value='new';save();f.reset();$('#compose').close();location.hash='konu/'+t.id};
-function route(){current=topics.find(t=>'#konu/'+t.id===location.hash);if(!current){if($('#thread').open)$('#thread').close();return}
- $('#threadTitle').textContent=current.title;$('#threadCat').textContent='#'+current.category;$('#by').textContent='@'+current.author+' · '+date(current.time);$('#bodyText').textContent=current.body;$('#replyHeading').textContent='Yanıtlar ['+current.replies.length+']';$('#comments').innerHTML=current.replies.map(r=>'<div class="reply"><small>@'+escapeHtml(r.author)+'</small><p class="message">'+escapeHtml(r.body)+'</p></div>').join('');if(!$('#thread').open)$('#thread').showModal()}
-$('#thread').onclose=()=>{$('#replyForm').reset();if(location.hash.startsWith('#konu/'))history.replaceState(null,'',location.href.split('#')[0])};
-$('#replyForm').onsubmit=e=>{e.preventDefault();const f=e.target;if(!valid(f)||!current)return;current.replies.push({author:f.elements.author.value.trim()||'misafir',body:f.elements.body.value.trim()});save();f.reset();route();$('#comments').lastElementChild.scrollIntoView({block:'nearest'})};
-window.onhashchange=route;render();route();
+form.onsubmit=async e=>{e.preventDefault();if(!member||!valid(form))return;const b=form.querySelector('.primary');b.disabled=true;try{const data=Object.fromEntries(new FormData(form));if(!editing&&(data.pollQuestion.trim()||data.pollOptions.trim()))data.poll={question:data.pollQuestion.trim(),options:data.pollOptions.split('\n').map(x=>x.trim()).filter(Boolean)};data.tags=data.tags.split(',').map(x=>x.trim()).filter(Boolean);const result=await change(editing?'edit':'create',{...data,id:editing?.id});if(!result)return;put(draftKey(),null);reset();render();$('#compose').close();location.hash='konu/'+result.id;route()}finally{b.disabled=false}};
+function renderPoll(t){
+ const panel=$('#pollPanel'),p=t.poll;panel.hidden=!p;
+ if(!p){panel.replaceChildren();return}
+ const total=p.counts.reduce((a,b)=>a+b,0),open=!p.closed&&!t.locked&&!t.archived&&!t.trash;
+ const old=panel.querySelector('input:checked');
+ const choice=panel.dataset.topic===t.id&&old?Number(old.value):p.choice;
+ panel.dataset.topic=t.id;
+ const rows=p.options.map((label,i)=>{
+  const n=p.counts[i],pct=total?Math.round(100*n/total):0;
+  const radio=member&&open?'<input type="radio" name="pollChoice" value="'+i+'" '+(choice===i?'checked':'')+'>':'';
+  return '<div class="poll-option"><label>'+radio+esc(label)+' <small>'+n+' oy · %'+pct+(p.choice===i?' · Oyun':'')+'</small></label><meter aria-label="'+esc(label)+'" value="'+n+'" max="'+(total||1)+'"></meter></div>';
+ }).join('');
+ panel.innerHTML='<h3>'+esc(p.question)+'</h3>'+rows+'<small>'+total+' oy · '+(open?'Oylama açık':'Oylama kapalı')+'</small><div class="controls">'+(member&&open?btn('pollVote',p.choice===null?'Oy ver':'Oyumu güncelle'):'')+(t.mine&&open?btn('pollClose','Anketi kapat'):'')+'</div>';
+}
+function displayThread(){
+ const t=current;if(!t)return;renderPoll(t);$('#threadTitle').textContent=t.title;$('#threadCat').textContent=[t.category,...t.tags].map(x=>'#'+x).join(' ');$('#bodyText').innerHTML=fmt(t.body);$('#by').innerHTML=profileButton(t.profile,t.author)+' · '+date(t.time);
+ const actions=t.trash?[['restore','Geri yükle'],['purge','Kalıcı sil']]:[['follow',followed.some(x=>x.id===t.id)?'Takibi bırak':'Konuyu takip et'],['edit','Düzenle'],['copy','Kopyasından konu aç'],['pin',t.pin?'Sabitlemeyi kaldır':'Sabitle'],['locked',t.locked?'Kilidi aç':'Yanıtları kilitle'],['star',t.star?'Kaydedilenlerden çıkar':'Kaydet'],['unread','Okunmadı işaretle'],['archived',t.archived?'Arşivden çıkar':'Arşivle'],['link','Bağlantıyı kopyala'],['txt','Metin olarak indir']];
+ $('#actions').innerHTML='<div class="controls">'+actions.filter(([k])=>t.mine||['link','txt','star','unread'].includes(k)||(member&&['copy','follow'].includes(k))).map(([k,v])=>btn(k,v)).join('')+'</div>';$('#danger').innerHTML=t.trash||!t.mine?'':btn('trash','Konuyu sil','danger');
+ const query=fold($('#rq').value),order=$('#rs').value;
+ const replies=t.replies.filter(r=>fold(r.author+' '+r.body).includes(query)).slice().sort((a,b)=>order==='likes'?b.likes-a.likes||a.time-b.time:order==='new'?b.time-a.time:a.time-b.time);
+ $('#replyHeading').textContent='Yanıtlar ['+t.replies.length+']';$('#comments').innerHTML=replies.map(r=>'<div class="reply" data-r="'+r.id+'"><small>'+profileButton(r.profile,r.author)+' · '+date(r.time)+(r.solution?' · ✓ Çözüm':'')+'</small><p class="message">'+fmt(r.body)+'</p>'+(!member||t.trash||t.locked?'':'<div class="controls">'+[['rquote','Alıntıla'],['redit','Düzenle'],['rdelete','Sil'],['like',r.like?'Beğenildi':'Beğen'],['solution',r.solution?'Çözüm işaretini kaldır':'Çözüm seç']].filter(([k])=>!(['redit','rdelete'].includes(k)&&!r.mine)&&!(k==='solution'&&!t.mine)).map(([k,v])=>btn(k,v)).join('')+'</div>')+'</div>').join('');rf.style.display=!member||t.trash||t.locked?'none':'grid'
+}
+function replyEditor(r=null){editReply=r;rf.reset();rf.elements.author.value=member?.name||'';rf.elements.author.readOnly=true;rf.elements.body.value=r?.body||read(personal()+'-reply-'+current.id,'');rf.querySelector('.primary').textContent=r?'Değişikliği kaydet':'Yanıt gönder';$('#cancelReply').hidden=!r}
+rf.querySelector('.end').insertAdjacentHTML('afterbegin','<button class="chip" type="button" id="cancelReply" hidden>Vazgeç</button>');$('#cancelReply').onclick=()=>replyEditor();
+rf.oninput=()=>{if(current&&!editReply)put(personal()+'-reply-'+current.id,rf.elements.body.value)};
+function route(){const t=topics.find(x=>'#konu/'+x.id===location.hash);if(!t){if($('#thread').open)$('#thread').close();current=null;return}const entering=t!==current||!$('#thread').open;current=t;if(entering){t.seen=true;save();$('#rq').value='';replyEditor();if(!$('#thread').open)$('#thread').showModal()}displayThread()}
+function exitThread(){history.replaceState(null,'',location.href.split('#')[0]);$('#thread').close();current=null}
+$('#thread').onclose=()=>{if(!$('#thread').open){history.replaceState(null,'',location.href.split('#')[0]);current=null}};
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
+$('#rq').oninput=displayThread;$('#rs').onchange=displayThread;
+rf.onsubmit=async e=>{e.preventDefault();if(!member||!current||!valid(rf))return;const b=rf.querySelector('.primary');b.disabled=true;try{const res=await change(editReply?'redit':'reply',{id:current.id,reply:editReply?.id,body:rf.elements.body.value});if(res){put(personal()+'-reply-'+current.id,'');$('#rq').value='';replyEditor();displayThread()}}finally{b.disabled=false}};
+function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)}
+$('#importFile').onchange=async e=>{try{if(!member)return;const f=e.target.files[0];if(!f)return;if(f.size>10000000)throw Error('Dosya çok büyük');const data=JSON.parse(await f.text());if(data.format!=='forum.sh/2'||!Array.isArray(data.topics))throw Error('Forum yedeği seç');const items=data.topics.map(normalize).filter(t=>!t.trash&&!topics.some(x=>x.id===t.id));if(!items.length)return notify('Yeni konu yok');if(!confirm(items.length+' konu ve yanıtları senin hesabından herkese açık yayımlansın mı?'))return;for(const t of items)await api('/api/write',{action:'import',...t});await refresh();notify('Yedek içeri aktarıldı')}catch(err){alert(err.message);await refresh()}finally{e.target.value=''}};
+document.addEventListener('click',async e=>{
+ const b=e.target.closest('[data-act]');if(!b)return;const k=b.dataset.act,t=current;
+ if(['compact','large','still'].includes(k)){prefs[k]=!prefs[k];pref();appearance();return}
+ if(k==='reset'){reset();render();return}
+ if(k==='readAll'){active().forEach(t=>t.seen=true);save();notify('Konular okundu işaretlendi');return}
+ if(k==='legacy'){download('yerel-forum.json',JSON.stringify({format:'forum.sh/2',topics:read(KEY,[])}),'application/json');return}
+ if(k==='backup'){download('forum-yedek.json',JSON.stringify({format:'forum.sh/2',topics},null,2),'application/json');return}
+ if(k==='import'){$('#importFile').click();return}
+ if(k==='preview'){$('#preview').hidden=!$('#preview').hidden;count();return}
+ const mark={bold:['**','**'],italic:['_','_'],code:['`','`'],quote:['> ',''],list:['- ','']}[k];
+ if(mark){const el=postFields.body,start=el.selectionStart,end=el.selectionEnd;const pre=(['quote','list'].includes(k)&&start&&el.value[start-1]!=='\n'?'\n':'')+mark[0];if(el.value.length+pre.length+mark[1].length>5000)return;el.setRangeText(pre+el.value.slice(start,end)+mark[1],start,end);el.focus();el.setSelectionRange(start+pre.length,end+pre.length);form.oninput();return}
+ if(!t)return;
+ if(k==='edit'||k==='copy'){writer(t,k==='copy');return}
+ if(k==='pollVote'){const checked=$('#pollPanel input:checked');if(!checked){notify('Bir seçenek seç.');return}b.disabled=true;try{await change(k,{id:t.id,choice:Number(checked.value)})}finally{b.disabled=false}return}
+ if(k==='pollClose'){if(confirm('Anket yeni oylara kapatılsın mı?'))await change(k,{id:t.id});return}
+ if(k==='follow'){b.disabled=true;try{const action=followed.some(x=>x.id===t.id)?'unfollow':'follow';await api('/api/write',{action,id:t.id});await updateInbox()}catch(e){alert(e.message)}finally{b.disabled=false}return}
+ if(k==='star'){t.star=!t.star;save();displayThread();return}
+ if(k==='unread'){t.seen=false;exitThread();save();return}
+ if(['pin','locked','archived','trash','restore','purge'].includes(k)){if(['trash','purge'].includes(k)&&!confirm(k==='trash'?'Konu çöp kutusuna taşınsın mı?':'Konu ve yanıtları kalıcı silinsin mi?'))return;const res=await change(k,{id:t.id});if(res&&['trash','restore','purge'].includes(k)&&current)exitThread();return}
+ if(k==='link'){try{await navigator.clipboard.writeText(location.href);b.textContent='Kopyalandı'}catch{prompt('Yerel konu bağlantısı',location.href)}return}
+ if(k==='txt'){download('konu-'+t.id+'.txt',[t.title,'@'+t.author,t.body,...t.replies.map(r=>'@'+r.author+'\n'+r.body)].join('\n\n'),'text/plain;charset=utf-8');return}
+ const r=t.replies.find(x=>x.id===b.closest('[data-r]')?.dataset.r);
+ if(r){if(k==='redit'){replyEditor(r);rf.elements.body.focus();return}if(k==='rquote'){replyEditor();rf.elements.body.value=(rf.elements.body.value+'\n> @'+r.author+'\n'+r.body.split('\n').map(line=>'> '+line).join('\n')+'\n').trimStart().slice(0,5000);rf.oninput();rf.elements.body.focus();return}if(k==='rdelete'&&!confirm('Yanıt silinsin mi?'))return;if(['rdelete','like','solution'].includes(k))await change(k,{id:t.id,reply:r.id})}
+});
+document.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||document.querySelector('dialog[open]')||e.target.matches('input,textarea,select'))return;if(e.key==='/'){e.preventDefault();$('#query').focus()}if(e.key.toLowerCase()==='n'){e.preventDefault();writer()}});
+let followed=[],profileId=null,profileVersion=0,inboxVersion=0;
+function profileButton(id,name){return '<button class="userlink" type="button" data-profile="'+esc(id)+'">@'+esc(name)+'</button>'}
+async function openProfile(id){
+ const version=++profileVersion;
+ const dlg=$('#profileDialog');profileId=id;
+ $('#profileContent').hidden=true;$('#profileStatus').textContent='Profil yükleniyor…';if(!dlg.open)dlg.showModal();
+ try{
+  const p=await api('/api/profile?id='+encodeURIComponent(id));if(version!==profileVersion)return;
+  $('#profileStatus').textContent='';$('#profileContent').hidden=false;$('#profileName').textContent='@'+p.name;
+  $('#profileBio').textContent=p.bio||'Henüz tanıtım yazısı eklenmedi.';
+  $('#profileStats').textContent=p.count+' konu · '+p.replies+' yanıt · '+p.solutions+' çözüm';
+  $('#profileTopics').innerHTML=p.topics.length?p.topics.map(t=>'<p><a data-open-topic="'+esc(t.id)+'" href="#konu/'+esc(t.id)+'">'+esc(t.title)+'</a></p>').join(''):'<p class="hint">Henüz konu yok.</p>';
+  $('#bioEditor').hidden=p.id!==member?.id;$('#bioInput').value=p.bio;$('#bioEditor').open=false;
+ }catch(e){if(version===profileVersion)$('#profileStatus').textContent=e.message}
+}
+function renderInbox(){
+ const count=followed.reduce((n,t)=>n+t.unread,0);$('#inboxButton').textContent=count?'Bildirimler ('+count+')':'Bildirimler';
+ const only=$('#newOnly').checked,rows=followed.filter(t=>!only||t.unread);
+ $('#inboxList').innerHTML=rows.map(t=>'<article class="inboxrow"><a data-open-topic="'+esc(t.id)+'" href="#konu/'+esc(t.id)+'">'+esc(t.title)+'</a><small>'+ (t.unread?t.unread+' yeni yanıt':'Yeni yanıt yok')+'</small></article>').join('')||'<p class="hint">'+(only?'Yeni yanıt bildirimi yok.':'Bir konuyu takip ettiğinde burada görünür.')+'</p>';
+}
+async function updateInbox(){
+ const version=++inboxVersion;const data=member?await api('/api/inbox'):[];
+ if(version!==inboxVersion)return;followed=data;renderInbox();
+ if(current&&$('#thread').open)displayThread()
+}
+function syncCommunity(){
+ $('#inboxButton').hidden=!member;$('#myProfile').hidden=!member;
+ updateInbox().catch(()=>{$('#inboxList').textContent='Bildirimler yüklenemedi.'})
+}
+$('#myProfile').onclick=()=>{if(member)openProfile(member.id)};
+$('#inboxButton').onclick=()=>{$('#inboxDialog').showModal();syncCommunity()};
+$('#newOnly').onchange=renderInbox;
+$('#bioForm').onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector('button');b.disabled=true;try{await api('/api/write',{action:'bio',bio:$('#bioInput').value});await openProfile(member.id)}catch(e){$('#profileStatus').textContent=e.message}finally{b.disabled=false}};
+document.addEventListener('click',async e=>{
+ const user=e.target.closest('[data-profile]');if(user){openProfile(user.dataset.profile);return}
+ const link=e.target.closest('[data-open-topic]');if(!link)return;e.preventDefault();
+ const id=link.dataset.openTopic,item=followed.find(t=>t.id===id);
+ try{await refresh();if(!topics.some(t=>t.id===id))throw Error('Bu konu artık erişilebilir değil.');
+ for(const dlg of [$('#profileDialog'),$('#inboxDialog')])if(dlg.open)dlg.close();
+ location.hash='konu/'+id;route();
+ if(member&&item?.unread){await api('/api/write',{action:'ack',id,until:item.last});await updateInbox()}
+ }catch(e){alert(e.message)}
+});
+setInterval(()=>{if(member&&!document.hidden)syncCommunity()},60000);
+
+window.onhashchange=route;refresh().then(()=>{route();if(!member&&!current&&!sessionStorage.getItem('forum-guest'))showLogin();if(location.search.includes('auth_error')){showLogin();$('#authStatus').textContent='Sosyal giriş tamamlanmadı. Tekrar deneyebilirsin.'}}).catch(()=>{$('#list').textContent='Forum yüklenemedi. Sayfayı yenileyerek tekrar dene.'});
 const ctx=$('#art').getContext('2d');
 function bubble(x,y,w,h,front){ctx.fillStyle=front?'#30200d':'#24190e';ctx.fillRect(x,y,w,h);ctx.strokeStyle=front?'#ffb000':'#af7721';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+4,y);for(const [a,b] of [[w-4,0],[w-4,2],[w,2],[w,h-4],[w-3,h-4],[w-3,h],[22,h],[12,h+10],[12,h],[3,h],[3,h-3],[0,h-3],[0,3],[4,3],[4,0]])ctx.lineTo(x+a,y+b);ctx.stroke()}
-bubble(56,5,65,35,false);ctx.fillStyle='#af7721';for(let i=0;i<3;i++)ctx.fillRect(80+i*7,19,3,3);bubble(13,20,66,35,true);ctx.fillStyle='#ffb000';for(let i=0;i<4;i++){ctx.fillRect(25+i*2,30+i*2,3,3);ctx.fillRect(25+i*2,42-i*2,3,3)}ctx.fillRect(41,43,12,3);
+bubble(56,5,65,35,false);ctx.fillStyle='#af7721';for(let i=0;i<3;i++)ctx.fillRect(80+i7,19,3,3);bubble(13,20,66,35,true);ctx.fillStyle='#ffb000';for(let i=0;i<4;i++){ctx.fillRect(25+i2,30+i2,3,3);ctx.fillRect(25+i2,42-i*2,3,3)}ctx.fillRect(41,43,12,3);
 </script></html>
